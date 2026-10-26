@@ -1,8 +1,0 @@
-is_global = true
-build_property.RootNamespace = Sensors_Transit
-build_property.ProjectDir = C:\Users\HP\Documents\Visual Studio 18\Templates\ProjectTemplates\C#\Sensors-Transit\Sensors Transit\Sensors Transit\Sensors Transit\
-build_property.EnableComHosting = 
-build_property.EnableGeneratedComInterfaceComImportInterop = 
-build_property.CsWinRTUseWindowsUIXamlProjections = false
-build_property.EffectiveAnalysisLevelStyle = 
-build_property.EnableCodeStyleSeverity = 
