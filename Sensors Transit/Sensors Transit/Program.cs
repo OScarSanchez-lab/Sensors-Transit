@@ -167,23 +167,33 @@ namespace SensorsTransit
         /// </summary>
         public void OrdenaVehicles()
         {
-            bool canvi = true;
-            Sensor aux;
+            SensorsLocalOrd = new List<Sensor>(SensorsLocal);   // còpia, no la mateixa llista
 
-            SensorsLocalOrd = SensorsLocal;
-            while (canvi)
+            int fase = 0;
+            int fasesSenseCanvis = 0;
+
+            while (fasesSenseCanvis < 2)
             {
-                canvi = false;
-                for (int i = 0; i < NumSensors - 1; i++)
+                int inici = fase % 2;                    // fase parell: 0-1, 2-3... / fase senar: 1-2, 3-4...
+                int parelles = (NumSensors - inici) / 2;
+                int canvis = 0;
+
+                Parallel.For(0, parelles, p =>
                 {
+                    int i = inici + 2 * p;
                     if (EstanOrdenats(SensorsLocalOrd[i], SensorsLocalOrd[i + 1]))
                     {
-                        aux = SensorsLocalOrd[i];
+                        Sensor aux = SensorsLocalOrd[i];
                         SensorsLocalOrd[i] = SensorsLocalOrd[i + 1];
                         SensorsLocalOrd[i + 1] = aux;
-                        canvi = true;
+                        Interlocked.Exchange(ref canvis, 1);
                     }
-                }
+                });
+
+                if (canvis == 0) fasesSenseCanvis++;
+                else fasesSenseCanvis = 0;
+
+                fase++;
             }
         }
 
