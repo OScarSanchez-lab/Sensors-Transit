@@ -111,11 +111,11 @@ namespace SensorsTransit
         /// </summary>
         public void ResetSensors()
         {
-            for (int i = 0; i < NumSensors; i++)
+            Parallel.For(0, NumSensors, i =>
             {
                 Sensors[i].Connecta();
                 Sensors[i].Reset();
-            }
+            });
         }
 
         //TASCA A FER: Optimitzar aquest mètode si és possible
