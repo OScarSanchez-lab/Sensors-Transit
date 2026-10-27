@@ -123,10 +123,20 @@ namespace SensorsTransit
         /// </summary>
         public void CalcularMitjana()
         {
-            for (int i = 0; i < NumSensors; i++)
-            {
-                SumaVehicles = Suma(SumaVehicles, SensorsLocal[i]);
-            }
+            SumaVehicles = 0;
+            object bloqueo = new object();
+
+            Parallel.For(0, NumSensors,
+                () => 0,
+                (i, estado, sumaLocal) => Suma(sumaLocal, SensorsLocal[i]),
+                sumaLocal =>
+                {
+                    lock (bloqueo)
+                    {
+                        SumaVehicles += sumaLocal;
+                    }
+                });
+
             MitjanaVehicles = SumaVehicles / NumSensors;
         }
 
@@ -141,10 +151,12 @@ namespace SensorsTransit
 
             Parallel.For(0, NumSensors - 1, () => 0,
                 (i, estado, maxLocal) => MesGran(maxLocal, SensorsLocal[i]),
-                maxLocal =>{
-                    lock (bloqueo){
-                        if (maxLocal > MaxVehicles) 
-                        MaxVehicles = maxLocal;
+                maxLocal =>
+                {
+                    lock (bloqueo)
+                    {
+                        if (maxLocal > MaxVehicles)
+                            MaxVehicles = maxLocal;
                     }
                 });
         }
