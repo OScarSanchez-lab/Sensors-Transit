@@ -72,7 +72,8 @@ namespace SensorsTransit
         {
             object bloqueo = new object();
 
-            Parallel.For(0, NumSensors, i =>{
+            Parallel.For(0, NumSensors, i =>
+            {
                 Sensor s = Sensors[i].EnviaDadesCentral();
                 lock (bloqueo)
                 {
@@ -138,11 +139,16 @@ namespace SensorsTransit
         public void CalcularMaxVehicles()
         {
             MaxVehicles = 0;
+            object bloqueo = new object();
 
-            for (int i = 0; i < NumSensors - 1; i++)
-            {
-                MaxVehicles = MesGran(MaxVehicles, SensorsLocal[i]);
-            }
+            Parallel.For(0, NumSensors - 1, () => 0,
+                (i, estado, maxLocal) => MesGran(maxLocal, SensorsLocal[i]),
+                maxLocal =>{
+                    lock (bloqueo){
+                        if (maxLocal > MaxVehicles) 
+                        MaxVehicles = maxLocal;
+                    }
+                });
         }
 
         //TASCA A FER: Optimitzar aquest mètode si és possible
